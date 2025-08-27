@@ -128,3 +128,5 @@ echo "System audit completed successfully!"
 echo "Report saved as: $REPORT_FILE"
 echo "Report size: $(ls -lh $REPORT_FILE | awk '{print $5}')"
 echo "Report contains $(wc -l < $REPORT_FILE) lines of system information"
+
+./system-audit.sh
