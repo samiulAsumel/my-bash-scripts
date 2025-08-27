@@ -123,8 +123,6 @@ End of System Audit Report
 EOL
 
 #Process the report to expand all command substitutions
-eval "cat\"$REPORT_FILE\"" > "temp_$REPORT_FILE"
-mv "temp_$REPORT_FILE" "$REPORT_FILE"
 
 echo "System audit completed successfully!"
 echo "Report saved as: $REPORT_FILE"
