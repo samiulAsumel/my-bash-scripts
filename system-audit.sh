@@ -1,132 +1,105 @@
+# Create script directory and navigate
+mkdir -p ~/labs/automation
+cd ~/labs/automation
+# Create comprehensive system information script
+cat > system-audit.sh << 'EOF'
 #!/bin/bash
-
-#Enterprise system audit script
-#Purpose: Comprehensive system information gathering for compliance
-
-#Set script variables
-REPORT_DATE=$(date '+%Y-%m-%d %H:%M:%S')
+# Enterprise System Audit Script
+# Purpose: Comprehensive system information collection for compliance
+# Set script variables
+REPORT_DATE=$(date '+%Y-%m-%d_%H-%M-%S')
 HOSTNAME=$(hostname -s)
 REPORT_FILE="system_audit_${HOSTNAME}_${REPORT_DATE}.txt"
-
-echo "Starting system audit for $HOSTNAME at $REPORT_DATE"
+echo "Starting system audit for $HOSTNAME at $(date)"
 echo "Report will be saved as: $REPORT_FILE"
-
-
-#Create comprehensive system report
-cat > $REPORT_FILE << EOL
-System Audit Report
-====================
-Report Date: $REPORT_DATE
-Hostname: $HOSTNAME
-
-==================================
-Enterprise system audit report
-==================================
-
+# Create comprehensive system report
+cat > "$REPORT_FILE" << 'EOL'
+================================================================
+ENTERPRISE SYSTEM AUDIT REPORT
+================================================================
 Generated: $(date)
 Hostname: $(hostname -f)
 Administrator: $(whoami)
 Report File: $REPORT_FILE
-
-====System Identification====
-OS Release: $(cat /etc/os-release | grep 'VERSION=' | cut -d '=' -f2 | tr -d '"')
+=== SYSTEM IDENTIFICATION ===
+OS Release: $(cat /etc/redhat-release)
 Kernel Version: $(uname -r)
 Architecture: $(uname -m)
 System Uptime: $(uptime -p)
 Last Boot: $(who -b | awk '{print $3, $4}')
-
-
-====Network Configuration====
+=== NETWORK CONFIGURATION ===
 Primary IP: $(hostname -I | awk '{print $1}')
-All IP: $(hostname -I)
-Network Interfaces: $(ip -brief addr show)
-
-Active Network Connections: $(ss -tuln | head -10)
-
-
-====Hardware Resources====
-CPU Information: 
+All IPs: $(hostname -I)
+Network Interfaces:
+$(ip -brief addr show)
+Active Network Connections:
+$(ss -tuln | head -10)
+=== HARDWARE RESOURCES ===
+CPU Information:
 Processor: $(lscpu | grep "Model name" | cut -d':' -f2 | xargs)
 CPU Cores: $(nproc)
-CPU Architecture: $(lscpu | grep "Architecture" | cut -d':' -f2 | xargs)
-
-Memory Information: $(free -h)
-
-Storage Information: $(df -h)
-
-Block Devices: $(lsblk)
-
-
-====User and Security====
-Current User Logged In: $(who)
-User ID: $(id -u)
-Group ID: $(id -g)
-Home Directory: $(eval echo ~$USER)
-Shell: $SHELL
-
-Total user Accounts: $(wc -l < /etc/passwd)
-Total groups: $(wc -l < /etc/group)
-Last 5 Logins: $(last -n 5)
-
-
-====Services and Processes====
-Running  Services: $(systemctl list-units --type=service --state=active --no-pager --no-legend | head -10)
-
-Failed Services: $(systemctl --failed --no-pager --no-legend | head -10)
-
-Top processes by CPU: $(ps aux --sort=-%cpu | head -10)
-
-Top processes by Memory: $(ps aux --sort=-%mem | head -10)
-
-
-====Security Status====
-SELinux Status: $(getenforce 2>/dev/null || echo "SELinux not available")
-
-Firewall Status: $(systemctl is-active firewalld 2>/dev/null || echo "Firewall not available")
-
-SSH Service Status: $(systemctl is-active sshd 2>/dev/null || echo "SSH Service not available")
-
-
-====System files verification====
-Critical files Check:
+CPU Architecture: $(lscpu | grep Architecture | cut -d':' -f2 | xargs)
+Memory Information:
+$(free -h)
+Storage$(df -h)
+Information:
+Block Devices:
+$(lsblk)
+=== USER AND SECURITY ===
+Current Users Logged In:
+$(who)
+Total User Accounts: $(wc -l < /etc/passwd)
+Total Groups: $(wc -l < /etc/group)
+Last 5 Logins:
+$(last -n 5)
+=== SERVICES AND PROCESSES ===
+Running Services:
+$(systemctl list-units --type=service --state=active --no-pager --no-legend | head -10)
+Failed Services:
+$(systemctl --failed --no-pager --no-legend)
+Top Processes by CPU:
+$(ps aux --sort=-%cpu | head -10)
+Top Processes by Memory:
+$(ps aux --sort=-%mem | head -10)
+=== SECURITY STATUS ===
+SELinux Status:
+$(getenforce 2>/dev/null || echo "SELinux not available")
+Firewall Status:
+$(systemctl is-active firewalld)
+SSH Service Status:
+$(systemctl is-active sshd)
+=== SYSTEM FILES VERIFICATION ===
+Critical Files Check:
 /etc/passwd: $(ls -la /etc/passwd | awk '{print $1, $3, $4, $5, $6}')
 /etc/shadow: $(ls -la /etc/shadow | awk '{print $1, $3, $4, $5, $6}')
 /etc/group: $(ls -la /etc/group | awk '{print $1, $3, $4, $5, $6}')
-
-Recent Configuration Changes: $(find /etc -name "*.conf" -type f -mtime -7 2>/dev/null | head -10)
-
-
-====Performance Metrics====
-Load Average: $(uptime | cut -d':' -f2 | awk '{print $1, $2, $3}')
-Disk I/O: $(iostat -x 1 1 2>/dev/null | tail -n +4 || echo "iostat not available")
-
-Memory Usage Summary: $(free -h | awk 'NR==2{printf "Used: %s/%s (%.1f%%)\n", $3, $2, $3/$2*100}')
-
-
-====Log File Status====
+Recent Configuration Changes:
+$(find /etc -name "*.conf" -type f -mtime -7 2>/dev/null | head -10)
+=== PERFORMANCE METRICS ===
+Load Average: $(uptime | cut -d',' -f3- | cut -d':' -f2)
+Disk I/O:
+$(iostat -x 1 1 2>/dev/null | tail -n +4 || echo "iostat not available")
+Memory Usage Summary:
+$(free -h | awk 'NR==2{printf "Used: %s/%s (%.1f%%)\n", $3, $2, $3/$2*100}')
+=== LOG FILE STATUS ===
 System Log Size: $(ls -lh /var/log/messages 2>/dev/null | awk '{print $5}' || echo "N/A")
-Auth  Log Size: $(ls -lh /var/log/secure 2>/dev/null | awk '{print $5}' || echo "N/A")
+Auth Log Size: $(ls -lh /var/log/secure 2>/dev/null | awk '{print $5}' || echo "N/A")
 Journal Size: $(journalctl --disk-usage | cut -d':' -f2 | xargs)
-
-Recent Critical messages: $(journalctl --priority=crit --since "24 hours ago" --no-pager -q | tail -5)
-
-
-====Audit Completion====
-Audit Completed at: $(date)
+Recent Critical Messages:
+$(journalctl --priority=crit --since "24 hours ago" --no-pager -q | tail -5)
+=== AUDIT COMPLETION ===
+Audit completed at: $(date)
 Report generated by: $(whoami)
-System Administrator: $(whoami)
-
-===================================================
-End of System Audit Report
-===================================================
-
+System administrator: $(whoami)
+================================================================
+END OF SYSTEM AUDIT REPORT
+================================================================
 EOL
-
-#Process the report to expand all command substitutions
-
+# Process the report to expand all command substitutions
+eval "cat \"$REPORT_FILE\"" > "temp_$REPORT_FILE"
+mv "temp_$REPORT_FILE" "$REPORT_FILE"
 echo "System audit completed successfully!"
 echo "Report saved as: $REPORT_FILE"
 echo "Report size: $(ls -lh $REPORT_FILE | awk '{print $5}')"
 echo "Report contains $(wc -l < $REPORT_FILE) lines of system information"
-
-./system-audit.sh
+EOF
