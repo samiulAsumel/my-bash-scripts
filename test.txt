@@ -1,0 +1,1 @@
+mkdir -p ~/labs/advanced-nav/{projects/{web,database,api},logs/{2024/{jan,feb,mar},2023/{dec,nov}},config/{dev,test}}
