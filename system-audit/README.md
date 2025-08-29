@@ -54,4 +54,4 @@ The script generates a timestamped audit report with the following details:
 
 Make the script executable: chmod +x system-audit.sh \
 Run the script: ./system-audit.sh \
-View the report: system_audit_<hostname>_<timestamp>.txt
+View the report: system_audit_hostname_timestamp.txt
