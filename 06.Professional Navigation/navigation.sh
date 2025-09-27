@@ -18,6 +18,6 @@ sudo mkdir -p /opt/company/logs/{nginx,apache,mysql,application}
 #Set corporate permissions
 sudo chown alma:alma /opt/company
 sudo chmod 755 /opt/company
-sudo chmod 750 /opt/company/ssl
+sudo chmod 750 /opt/company/web/ssl
 
 echo "Enterprise directories created under /opt/company with appropriate permissions."
