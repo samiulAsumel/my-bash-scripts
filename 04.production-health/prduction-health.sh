@@ -1,9 +1,8 @@
-  1 #!/bin/bash
-  2 
+  1 #!/bin/bash 
   3 # Ticket: DevOps-001 - Production Readiness Check
-  4 
+
   5 # Task: Production Health Check (Like Senior DevOps Engineer)
-  6 
+
   7 {
   8         echo "=== Production Health Report ==="
   9         echo "Generated: $(date)"
