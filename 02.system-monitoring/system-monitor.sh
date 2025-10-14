@@ -4,7 +4,7 @@ echo"Load Average: $(uptime | awk -F'load average:' '{print $2}')"
 echo "Memory Usage:"
 free -m  | grep -E "(Mem | Swap)"
 echo "Top 5 CPU processes:"
-ps  aux --sort=-%cpu | head -6
+ps aux --sort=-%cpu | head -6
 echo "Top 10  Memory processes:"
 echo "Top 5 CPU processes:"
 ps aux --sort=-%cpu | head -6
